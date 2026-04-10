@@ -1,98 +1,119 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
 
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
+const App = () => {
+  // Setup State
+  const [count, setCount] = useState(0);
+  const [name, setName] = useState('');
+  const [bgColor, setBgColor] = useState('#ffffff'); // Default background putih
 
-export default function HomeScreen() {
+  // --- LOGIC: MAIN QUEST ---
+  
+  // Fungsi Increment (Tambah)
+  const increment = () => setCount(count + 1);
+  
+  // Fungsi Decrement (Kurang) + Validasi Tantangan (Tidak boleh < 0)
+  const decrement = () => {
+    if (count > 0) {
+      setCount(count - 1);
+    }
+  };
+
+  // --- LOGIC: SIDE QUEST ---
+
+  // Fungsi Toggle Color (Ubah warna background secara acak)
+  const changeColor = () => {
+    // Generate warna hex acak
+    const randomColor = '#' + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0');
+    setBgColor(randomColor);
+  };
+
+  // Fungsi Reset (Sesuai dengan template README)
+  const resetAll = () => {
+    setCount(0);
+    setName('');
+    setBgColor('#ffffff');
+  };
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
+    <View style={[styles.container, { backgroundColor: bgColor }]}>
+      
+      {/* 2. Greeting Form */}
+      <View style={styles.section}>
+        <Text style={styles.greetingText}>
+          Halo, {name ? name : '[Nama]'}!
+        </Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Ketik nama kamu di sini..."
+          value={name}
+          onChangeText={(text) => setName(text)}
         />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
+      </View>
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+      {/* 1. Counter System */}
+      <View style={styles.section}>
+        <Text style={styles.counterText}>{count}</Text>
+        <View style={styles.buttonRow}>
+          <Button title="   -   " onPress={decrement} />
+          <View style={styles.space} />
+          <Button title="   +   " onPress={increment} />
+        </View>
+      </View>
+
+      {/* Side Quest & Reset */}
+      <View style={styles.section}>
+        <Button title="Ganti Warna" onPress={changeColor} color="#ff8c00" />
+        <View style={{ height: 10 }} />
+        <Button title="Reset Semua" onPress={resetAll} color="#d9534f" />
+      </View>
+
+    </View>
   );
-}
+};
 
+// Styling UI
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
+  container: {
+    flex: 1,
+    justifyContent: 'center',
     alignItems: 'center',
-    gap: 8,
+    padding: 20,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  section: {
+    marginBottom: 40,
+    alignItems: 'center',
+    width: '100%',
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  greetingText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 15,
+    color: '#333',
   },
+  input: {
+    width: '80%',
+    height: 45,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    paddingHorizontal: 15,
+    borderRadius: 8,
+    backgroundColor: '#fff',
+    fontSize: 16,
+  },
+  counterText: {
+    fontSize: 60,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    color: '#333',
+  },
+  buttonRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
+  space: {
+    width: 20,
+  }
 });
+
+export default App;
